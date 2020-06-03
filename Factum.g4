@@ -5,12 +5,12 @@ grammar Factum;
 //-------------declaração de variavel e tipos de dados--------
 
 //regra que possui todas regras de declaracao
-declaracao_de_variavel    : declaracao_de_variavel_sem_atribuicao | declaracao_de_variavel_abstrato_com_atribuicao |
+declaracao_de_variavel    : (declaracao_de_variavel_sem_atribuicao | declaracao_de_variavel_abstrato_com_atribuicao |
 declaracao_de_variavel_booleano_com_atribuicao | declaracao_de_variavel_inteiro_com_atribuicao | declaracao_de_variavel_real_com_atribuicao
- | declaracao_de_variavel_simbolo_com_atribuicao | declaracao_de_variavel_texto_com_atribuicao;
+ | declaracao_de_variavel_simbolo_com_atribuicao | declaracao_de_variavel_texto_com_atribuicao) TERMINAL;
 
 //declaracao de variavel sem atribuicao
-declaracao_de_variavel_sem_atribuicao : (REAL | INTEIRO | SIMBOLO | CADEIA | ABISTRATO) ID TERMINAL;
+declaracao_de_variavel_sem_atribuicao : (REAL | INTEIRO | SIMBOLO | CADEIA | ABISTRATO) ID ;
 
 //tipos primitivos pertencentes a Factum
     REAL: 'real';
@@ -22,12 +22,12 @@ declaracao_de_variavel_sem_atribuicao : (REAL | INTEIRO | SIMBOLO | CADEIA | ABI
     ABISTRATO: [A-Z][a-zA-Z0-9]*;
 
 //declaracao de variaveis com atribuicao para inicializacao de variavel
-declaracao_de_variavel_abstrato_com_atribuicao: ABISTRATO ID '(' ID ')' TERMINAL ;
-declaracao_de_variavel_inteiro_com_atribuicao : INTEIRO ID ATRIBUICAO VALORES_TIPO_INTEIRO TERMINAL;
-declaracao_de_variavel_booleano_com_atribuicao: BOOLEANO ID ATRIBUICAO VALORES_TIPO_BOOLEANO TERMINAL;
-declaracao_de_variavel_real_com_atribuicao    : REAL ID ATRIBUICAO VALORES_TIPO_REAL TERMINAL;
-declaracao_de_variavel_simbolo_com_atribuicao : SIMBOLO ID ATRIBUICAO VALORES_TIPO_SIMBOLO TERMINAL;
-declaracao_de_variavel_texto_com_atribuicao   : CADEIA ID ATRIBUICAO VALOR_TIPO_CADEIA TERMINAL;
+declaracao_de_variavel_abstrato_com_atribuicao: ABISTRATO ID '(' ID ')' ;
+declaracao_de_variavel_inteiro_com_atribuicao : INTEIRO ID ATRIBUICAO VALORES_TIPO_INTEIRO ;
+declaracao_de_variavel_booleano_com_atribuicao: BOOLEANO ID ATRIBUICAO VALORES_TIPO_BOOLEANO ;
+declaracao_de_variavel_real_com_atribuicao    : REAL ID ATRIBUICAO VALORES_TIPO_REAL ;
+declaracao_de_variavel_simbolo_com_atribuicao : SIMBOLO ID ATRIBUICAO VALORES_TIPO_SIMBOLO ;
+declaracao_de_variavel_texto_com_atribuicao   : CADEIA ID ATRIBUICAO VALOR_TIPO_CADEIA ;
 
 
 
@@ -80,19 +80,28 @@ DIFERENTE  : '!=';
 
 
 //condicional "if" "else"__________________________________________________________________________
-funcao_de_restricao_de_dominio: 'se' '(' ID SIMBOLOS_DE_COMPARACAO ID ')' '{'  instrucoes_de_troca_de_valor+  '}' ('senao' '{' instrucoes_de_troca_de_valor+ '}')*;
+instrucao_de_controle: instrucao_de_repeticao_com_contador | instrucao_de_repeticao_condicional_final | instrucao_de_repeticao_condicional_inicial | instrucao_de_restricao_de_dominio;
 
-repeticao_condicional_inicial: 'enquanto' '(' ID SIMBOLOS_DE_COMPARACAO ID ')' '{' instrucoes_de_troca_de_valor+ '}' ;
+instrucao_de_restricao_de_dominio: 'se' '(' ID SIMBOLOS_DE_COMPARACAO ID ')' '{'  (instrucoes_de_troca_de_valor | instrucao_de_controle)+  '}'
+ ('senao' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+ '}')*;
 
-repeticao_condicional_final: 'repita' '{' instrucoes_de_troca_de_valor+ '}' 'ate' '(' ID SIMBOLOS_DE_COMPARACAO ID ')';
+instrucao_de_repeticao_condicional_inicial: 'enquanto' '(' ID SIMBOLOS_DE_COMPARACAO ID ')' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+ '}' ;
 
-repeticao_com_contador: 'para'  '(' ID ATRIBUICAO ID ';' ID SIMBOLOS_DE_COMPARACAO ID ';' expressao_aritmetica ')' '{' instrucoes_de_troca_de_valor+  '}' ;
+instrucao_de_repeticao_condicional_final: 'repita' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+ '}' 'ate' '(' ID SIMBOLOS_DE_COMPARACAO ID ')' ';';
+
+instrucao_de_repeticao_com_contador: 'para'  '(' ID ATRIBUICAO ID ';' ID SIMBOLOS_DE_COMPARACAO ID ';' expressao_aritmetica ')' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+  '}' ;
 
 
 //regra de producao que engloba as instrucoes de troca de valor
 instrucoes_de_troca_de_valor : declaracao_de_variavel | expressao_aritmetica | atribuicao_de_variavel;
 
-//___________________________________________________________________________________________________________
+//declaracao de funcao___________________________________________________________________________________________________________
+
+declaracao_de_funcao: 'INICIO' REAL ID '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' ';'
+    (instrucao_de_controle | instrucoes_de_troca_de_valor)* 'FIM' ';';
+
+TIPOS_VALORES: INTEIRO | REAL | SIMBOLO | CADEIA | BOOLEANO | ABISTRATO ;
+
 
 //terminais importantes
     DIG: [0-9]+;
