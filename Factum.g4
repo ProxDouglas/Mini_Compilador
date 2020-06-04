@@ -44,14 +44,14 @@ tipos_de_valores: INTEIRO | REAL | SIMBOLO | CADEIA | BOOLEANO | ABISTRATO ;
 //concatenacao de cadeias
 expressao_aritmetica : concatenacao_de_cadeias | expressao_aritmetica_numericas;
 
-concatenacao_de_cadeias : TIPOS_DE_CADEIAS_ELEMENTOS (SOMA TIPOS_DE_CADEIAS_ELEMENTOS)+;
+concatenacao_de_cadeias : tipos_de_cadeias_elemento (SOMA tipos_de_cadeias_elemento)+;
 
-TIPOS_DE_CADEIAS_ELEMENTOS : VALORES_TIPO_SIMBOLO | VALOR_TIPO_CADEIA;
+tipos_de_cadeias_elemento : VALORES_TIPO_SIMBOLO | VALOR_TIPO_CADEIA | ID;
 
 //aceita valores do tipo inteiro ou real
-expressao_aritmetica_numericas: tipo_de_valores_numericos (operador tipo_de_valores_numericos)+ ;
+expressao_aritmetica_numericas: tipo_de_valores_numericos  (operador tipo_de_valores_numericos)+ ;
 
-tipo_de_valores_numericos : VALORES_TIPO_INTEIRO | VALORES_TIPO_REAL;
+tipo_de_valores_numericos : VALORES_TIPO_INTEIRO | VALORES_TIPO_REAL | ID;
 operador : SOMA | SUBTRAIR | MULTIPLICAR | DIVIDIR ;
 
     //terminais
@@ -87,7 +87,7 @@ instrucao_de_restricao_de_dominio: 'se' '(' ID SIMBOLOS_DE_COMPARACAO ID ')' '{'
 
 instrucao_de_repeticao_condicional_inicial: 'enquanto' '(' ID SIMBOLOS_DE_COMPARACAO ID ')' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+ '}' ;
 
-instrucao_de_repeticao_condicional_final: 'repita' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+ '}' 'ate' '(' ID SIMBOLOS_DE_COMPARACAO ID ')' ';';
+instrucao_de_repeticao_condicional_final: 'repita' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+ '}' 'ate' '(' ID SIMBOLOS_DE_COMPARACAO ID ')' TERMINAL;
 
 instrucao_de_repeticao_com_contador: 'para'  '(' ID ATRIBUICAO ID ';' ID SIMBOLOS_DE_COMPARACAO ID ';' expressao_aritmetica ')' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+  '}' ;
 
@@ -98,19 +98,20 @@ instrucoes_de_troca_de_valor : declaracao_de_variavel | expressao_aritmetica | a
 //declaracao de funcao___________________________________________________________________________________________________________
 
 declaracao_de_funcao_metodo: 'INICIO' tipos_de_valores ID '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
-    (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' ';';
+    (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' TERMINAL;
 
 
-criacao_de_tipo_abstrato: 'INICIO' tipos_de_valores ABISTRATO '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
-    (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' ';';
-
-chamada_de_funcao : (ID '(' (ID)* ')' | ID ATRIBUICAO ID '(' (ID)* ')' ) ';';
+criacao_de_tipo_abstrato: 'INICIO' ABISTRATO '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
+    ( instrucao_de_restricao_de_dominio | (declaracao_de_variavel_sem_atribuicao TERMINAL) | chamada_de_funcao)+ '}''FIM' TERMINAL;
 
 
-funcao_principal: 'INICIO' 'main' '(' ')' '{' (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' ';';
+chamada_de_funcao : (ID '(' (ID)* ')' | ID ATRIBUICAO ID '(' (ID)* ')' ) TERMINAL;
 
 
-gramatica_de_factum: (declaracao_de_variavel_sem_atribuicao ';')* funcao_principal declaracao_de_funcao_metodo* criacao_de_tipo_abstrato*;
+funcao_principal: 'INICIO' 'main' '(' ')' '{' (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' TERMINAL;
+
+
+gramatica_de_factum: (declaracao_de_variavel_sem_atribuicao TERMINAL)* funcao_principal declaracao_de_funcao_metodo* criacao_de_tipo_abstrato*;
 
 //terminais importantes
     DIG: [0-9]+;
