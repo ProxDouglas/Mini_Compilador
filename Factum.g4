@@ -10,7 +10,7 @@ declaracao_de_variavel_booleano_com_atribuicao | declaracao_de_variavel_inteiro_
  | declaracao_de_variavel_simbolo_com_atribuicao | declaracao_de_variavel_texto_com_atribuicao) TERMINAL;
 
 //declaracao de variavel sem atribuicao
-declaracao_de_variavel_sem_atribuicao : (REAL | INTEIRO | SIMBOLO | CADEIA | ABISTRATO) ID ;
+declaracao_de_variavel_sem_atribuicao : (REAL | INTEIRO | SIMBOLO | CADEIA | BOOLEANO | ABISTRATO) ID ;
 
 //tipos primitivos pertencentes a Factum
     REAL: 'real';
@@ -29,7 +29,7 @@ declaracao_de_variavel_real_com_atribuicao    : REAL ID ATRIBUICAO VALORES_TIPO_
 declaracao_de_variavel_simbolo_com_atribuicao : SIMBOLO ID ATRIBUICAO VALORES_TIPO_SIMBOLO ;
 declaracao_de_variavel_texto_com_atribuicao   : CADEIA ID ATRIBUICAO VALOR_TIPO_CADEIA ;
 
-
+tipos_de_valores: INTEIRO | REAL | SIMBOLO | CADEIA | BOOLEANO | ABISTRATO ;
 
     //valores de atribuicao de tipos pertencentes a factum
     VALORES_TIPO_BOOLEANO: 'true' | 'false';
@@ -97,11 +97,20 @@ instrucoes_de_troca_de_valor : declaracao_de_variavel | expressao_aritmetica | a
 
 //declaracao de funcao___________________________________________________________________________________________________________
 
-declaracao_de_funcao: 'INICIO' REAL ID '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' ';'
-    (instrucao_de_controle | instrucoes_de_troca_de_valor)* 'FIM' ';';
+declaracao_de_funcao_metodo: 'INICIO' tipos_de_valores ID '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
+    (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' ';';
 
-TIPOS_VALORES: INTEIRO | REAL | SIMBOLO | CADEIA | BOOLEANO | ABISTRATO ;
 
+criacao_de_tipo_abstrato: 'INICIO' tipos_de_valores ABISTRATO '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
+    (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' ';';
+
+chamada_de_funcao : (ID '(' (ID)* ')' | ID ATRIBUICAO ID '(' (ID)* ')' ) ';';
+
+
+funcao_principal: 'INICIO' 'main' '(' ')' '{' (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' ';';
+
+
+gramatica_de_factum: (declaracao_de_variavel_sem_atribuicao ';')* funcao_principal declaracao_de_funcao_metodo* criacao_de_tipo_abstrato*;
 
 //terminais importantes
     DIG: [0-9]+;
