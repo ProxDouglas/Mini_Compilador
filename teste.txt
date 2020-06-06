@@ -1,0 +1,23 @@
+
+INICIO main(){
+    func(s);
+    x = num();
+    ERRO s;
+}FIM;
+
+INICIO inteiro num ( inteiro s){    
+    s = 7 + s;
+    retorna s;
+}FIM;
+
+// tipo abstrato 
+INICIO TIPO ERRO{
+    ERRO(){
+        inteiro int;
+    }
+    
+    inteiro getERRO(){
+        inteiro s;
+        retorna s;
+    }
+}FIM;

@@ -2,6 +2,10 @@
 grammar Factum;
 
 
+gramatica_de_factum: (declaracao_de_variavel_sem_atribuicao TERMINAL)* funcao_principal declaracao_de_funcao_metodo* criacao_de_tipo_abstrato*;
+
+
+
 //-------------declaração de variavel e tipos de dados--------
 
 //regra que possui todas regras de declaracao
@@ -98,20 +102,26 @@ instrucoes_de_troca_de_valor : declaracao_de_variavel | expressao_aritmetica | a
 //declaracao de funcao___________________________________________________________________________________________________________
 
 declaracao_de_funcao_metodo: 'INICIO' tipos_de_valores ID '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
-    (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' TERMINAL;
+    (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ 'retorna' ID TERMINAL '}''FIM' TERMINAL;
 
 
-criacao_de_tipo_abstrato: 'INICIO' ABISTRATO '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
-    ( instrucao_de_restricao_de_dominio | (declaracao_de_variavel_sem_atribuicao TERMINAL) | chamada_de_funcao)+ '}''FIM' TERMINAL;
 
+criacao_de_tipo_abstrato: 'INICIO' 'TIPO' ABISTRATO '{' declaracao_de_variavel* formato_de_tipo_abstrato metodo_abstrato* '}' 'FIM' TERMINAL;
 
-chamada_de_funcao : (ID '(' (ID)* ')' | ID ATRIBUICAO ID '(' (ID)* ')' ) TERMINAL;
+formato_de_tipo_abstrato: ABISTRATO'(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
+                         ( instrucao_de_restricao_de_dominio | instrucoes_de_troca_de_valor )+
+
+                     '}';
+
+metodo_abstrato: tipos_de_valores ID '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
+    (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao )* 'retorna' ID TERMINAL '}';
 
 
 funcao_principal: 'INICIO' 'main' '(' ')' '{' (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' TERMINAL;
 
 
-gramatica_de_factum: (declaracao_de_variavel_sem_atribuicao TERMINAL)* funcao_principal declaracao_de_funcao_metodo* criacao_de_tipo_abstrato*;
+chamada_de_funcao : (ID '(' ID? (',' ID)* ')' | ID ATRIBUICAO ID '(' ID? (',' ID)* ')' ) TERMINAL;
+
 
 //terminais importantes
     DIG: [0-9]+;
