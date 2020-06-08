@@ -86,14 +86,23 @@ DIFERENTE  : '!=';
 //condicional "if" "else"__________________________________________________________________________
 instrucao_de_controle: instrucao_de_repeticao_com_contador | instrucao_de_repeticao_condicional_final | instrucao_de_repeticao_condicional_inicial | instrucao_de_restricao_de_dominio;
 
-instrucao_de_restricao_de_dominio: 'se' '(' ID SIMBOLOS_DE_COMPARACAO ID ')' '{'  (instrucoes_de_troca_de_valor | instrucao_de_controle)+  '}'
+instrucao_de_restricao_de_dominio: 'se' '(' logica_proposicional_entre_comparacoes ')' '{'  (instrucoes_de_troca_de_valor | instrucao_de_controle)+  '}'
  ('senao' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+ '}')*;
 
-instrucao_de_repeticao_condicional_inicial: 'enquanto' '(' ID SIMBOLOS_DE_COMPARACAO ID ')' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+ '}' ;
+//simbolos de logica proposicional
+SIMBOLO_LOGICO: CONJUCAO | DIJUNCAO;
+
+CONJUCAO: '&&';
+DIJUNCAO: '||';
+
+logica_proposicional_entre_comparacoes: ID SIMBOLOS_DE_COMPARACAO ID ( SIMBOLO_LOGICO  ID SIMBOLOS_DE_COMPARACAO ID);
+
+
+instrucao_de_repeticao_condicional_inicial: 'enquanto' '(' logica_proposicional_entre_comparacoes ')' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+ '}' ;
 
 instrucao_de_repeticao_condicional_final: 'repita' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+ '}' 'ate' '(' ID SIMBOLOS_DE_COMPARACAO ID ')' TERMINAL;
 
-instrucao_de_repeticao_com_contador: 'para'  '(' ID ATRIBUICAO ID ';' ID SIMBOLOS_DE_COMPARACAO ID ';' expressao_aritmetica ')' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+  '}' ;
+instrucao_de_repeticao_com_contador: 'para'  '(' atribuicao_de_variavel ';' logica_proposicional_entre_comparacoes ';' expressao_aritmetica ')' '{' (instrucoes_de_troca_de_valor | instrucao_de_controle)+  '}' ;
 
 
 //regra de producao que engloba as instrucoes de troca de valor
@@ -116,11 +125,15 @@ formato_de_tipo_abstrato: ABISTRATO'(' (declaracao_de_variavel_sem_atribuicao ('
 metodo_abstrato: tipos_de_valores ID '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
     (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao )* 'retorna' ID TERMINAL '}';
 
+chamada_de_funcao_tipo_abstrato: (ASSOCIACAO_DE_IDENTIFICADORES_DE_TIPO_ABSTRATO '(' (ID (',' ID)*)? ')' | ID ATRIBUICAO ASSOCIACAO_DE_IDENTIFICADORES_DE_TIPO_ABSTRATO '(' (ID (',' ID)*)? ')' ) TERMINAL;
+
+ASSOCIACAO_DE_IDENTIFICADORES_DE_TIPO_ABSTRATO: [a-zA-Z][a-zA-Z0-9]*'.'[a-zA-Z][a-zA-Z0-9]*;
+
 
 funcao_principal: 'INICIO' 'main' '(' ')' '{' (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' TERMINAL;
 
 
-chamada_de_funcao : (ID '(' ID? (',' ID)* ')' | ID ATRIBUICAO ID '(' ID? (',' ID)* ')' ) TERMINAL;
+chamada_de_funcao : (ID '(' (ID (',' ID)*)? ')' | ID ATRIBUICAO ID '(' (ID (',' ID)*)? ')' ) TERMINAL;
 
 
 //terminais importantes
@@ -131,5 +144,6 @@ chamada_de_funcao : (ID '(' ID? (',' ID)* ')' | ID ATRIBUICAO ID '(' ID? (',' ID
 
 
     SEP  : [ \t\r\n]+ -> skip;
+
 
 
