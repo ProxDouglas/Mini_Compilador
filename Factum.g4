@@ -1,20 +1,21 @@
 
+
 grammar Factum;
 
 
-gramatica_de_factum: (declaracao_de_variavel_sem_atribuicao TERMINAL)* funcao_principal declaracao_de_funcao_metodo* criacao_de_tipo_abstrato*;
+gramatica_de_factum: (declaracao_de_variavel_sem_atribuicao TERMINAL)* funcao_principal declaracao_de_funcao_metodo* ;
 
 
 
 //-------------declaração de variavel e tipos de dados--------
 
 //regra que possui todas regras de declaracao
-declaracao_de_variavel    : (declaracao_de_variavel_sem_atribuicao | declaracao_de_variavel_abstrato_com_atribuicao |
+declaracao_de_variavel    : (declaracao_de_variavel_sem_atribuicao  |
 declaracao_de_variavel_booleano_com_atribuicao | declaracao_de_variavel_inteiro_com_atribuicao | declaracao_de_variavel_real_com_atribuicao
  | declaracao_de_variavel_simbolo_com_atribuicao | declaracao_de_variavel_texto_com_atribuicao) TERMINAL;
 
 //declaracao de variavel sem atribuicao
-declaracao_de_variavel_sem_atribuicao : (REAL | INTEIRO | SIMBOLO | CADEIA | BOOLEANO | ABISTRATO) ID ;
+declaracao_de_variavel_sem_atribuicao : (REAL | INTEIRO | SIMBOLO | CADEIA | BOOLEANO ) ID ;
 
 //tipos primitivos pertencentes a Factum
     REAL: 'real';
@@ -23,17 +24,17 @@ declaracao_de_variavel_sem_atribuicao : (REAL | INTEIRO | SIMBOLO | CADEIA | BOO
     BOOLEANO: 'booleano';
     //tipo de factum "String"
     CADEIA: 'cadeia';
-    ABISTRATO: [A-Z][a-zA-Z0-9]*;
+    //ABISTRATO: [A-Z][a-zA-Z0-9]*;
 
 //declaracao de variaveis com atribuicao para inicializacao de variavel
-declaracao_de_variavel_abstrato_com_atribuicao: ABISTRATO ID '(' ID ')' ;
+//declaracao_de_variavel_abstrato_com_atribuicao: ABISTRATO ID '(' ID ')' ;
 declaracao_de_variavel_inteiro_com_atribuicao : INTEIRO ID ATRIBUICAO VALORES_TIPO_INTEIRO ;
 declaracao_de_variavel_booleano_com_atribuicao: BOOLEANO ID ATRIBUICAO VALORES_TIPO_BOOLEANO ;
 declaracao_de_variavel_real_com_atribuicao    : REAL ID ATRIBUICAO VALORES_TIPO_REAL ;
 declaracao_de_variavel_simbolo_com_atribuicao : SIMBOLO ID ATRIBUICAO VALORES_TIPO_SIMBOLO ;
 declaracao_de_variavel_texto_com_atribuicao   : CADEIA ID ATRIBUICAO VALOR_TIPO_CADEIA ;
 
-tipos_de_valores: INTEIRO | REAL | SIMBOLO | CADEIA | BOOLEANO | ABISTRATO ;
+tipos_de_valores: INTEIRO | REAL | SIMBOLO | CADEIA | BOOLEANO  ;
 
     //valores de atribuicao de tipos pertencentes a factum
     VALORES_TIPO_BOOLEANO: 'true' | 'false';
@@ -106,20 +107,19 @@ instrucao_de_repeticao_com_contador: 'para'  '(' atribuicao_de_variavel ';' logi
 
 
 //regra de producao que engloba as instrucoes de troca de valor
-instrucoes_de_troca_de_valor : declaracao_de_variavel | expressao_aritmetica | atribuicao_de_variavel;
+instrucoes_de_troca_de_valor :  expressao_aritmetica | atribuicao_de_variavel;
 
 //declaracao de funcao___________________________________________________________________________________________________________
 
 declaracao_de_funcao_metodo: 'INICIO' tipos_de_valores ID '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
-    (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ 'retorna' ID TERMINAL '}''FIM' TERMINAL;
+    declaracao_de_variavel* (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ 'retorna' ID TERMINAL '}''FIM' TERMINAL;
 
 
 
-criacao_de_tipo_abstrato: 'INICIO' 'TIPO' ABISTRATO '{' declaracao_de_variavel* formato_de_tipo_abstrato metodo_abstrato* '}' 'FIM' TERMINAL;
+/*criacao_de_tipo_abstrato: 'INICIO' 'TIPO' ABISTRATO '{' declaracao_de_variavel* formato_de_tipo_abstrato metodo_abstrato* '}' 'FIM' TERMINAL;
 
 formato_de_tipo_abstrato: ABISTRATO'(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
                          ( instrucao_de_restricao_de_dominio | instrucoes_de_troca_de_valor )+
-
                      '}';
 
 metodo_abstrato: tipos_de_valores ID '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
@@ -127,10 +127,10 @@ metodo_abstrato: tipos_de_valores ID '(' (declaracao_de_variavel_sem_atribuicao 
 
 chamada_de_funcao_tipo_abstrato: (ASSOCIACAO_DE_IDENTIFICADORES_DE_TIPO_ABSTRATO '(' (ID (',' ID)*)? ')' | ID ATRIBUICAO ASSOCIACAO_DE_IDENTIFICADORES_DE_TIPO_ABSTRATO '(' (ID (',' ID)*)? ')' ) TERMINAL;
 
-ASSOCIACAO_DE_IDENTIFICADORES_DE_TIPO_ABSTRATO: [a-zA-Z][a-zA-Z0-9]*'.'[a-zA-Z][a-zA-Z0-9]*;
+ASSOCIACAO_DE_IDENTIFICADORES_DE_TIPO_ABSTRATO: [a-zA-Z][a-zA-Z0-9]*'.'[a-zA-Z][a-zA-Z0-9]*;*/
 
 
-funcao_principal: 'INICIO' 'main' '(' ')' '{' (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' TERMINAL;
+funcao_principal: 'INICIO' 'main' '(' ')' '{' declaracao_de_variavel+ (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' TERMINAL;
 
 
 chamada_de_funcao : (ID '(' (ID (',' ID)*)? ')' | ID ATRIBUICAO ID '(' (ID (',' ID)*)? ')' ) TERMINAL;
