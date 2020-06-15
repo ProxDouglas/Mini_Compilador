@@ -3,7 +3,7 @@
 grammar Factum;
 
 
-gramatica_de_factum: (declaracao_de_variavel_sem_atribuicao TERMINAL)* funcao_principal declaracao_de_funcao_metodo* ;
+gramatica_de_factum: ((comentar)* declaracao_de_variavel_sem_atribuicao TERMINAL)* (comentar)*funcao_principal (comentar)*declaracao_de_funcao_metodo* ;
 
 
 
@@ -14,7 +14,7 @@ declaracao_de_variavel    : (declaracao_de_variavel_sem_atribuicao  |
 declaracao_de_variavel_booleano_com_atribuicao | declaracao_de_variavel_inteiro_com_atribuicao | declaracao_de_variavel_real_com_atribuicao
  | declaracao_de_variavel_simbolo_com_atribuicao | declaracao_de_variavel_texto_com_atribuicao) TERMINAL;
 
-//declaracao de variavel sem atribuicao
+
 declaracao_de_variavel_sem_atribuicao : (REAL | INTEIRO | SIMBOLO | CADEIA | BOOLEANO ) ID ;
 
 //tipos primitivos pertencentes a Factum
@@ -24,10 +24,9 @@ declaracao_de_variavel_sem_atribuicao : (REAL | INTEIRO | SIMBOLO | CADEIA | BOO
     BOOLEANO: 'booleano';
     //tipo de factum "String"
     CADEIA: 'cadeia';
+    VAZIO: 'vazio';
     //ABISTRATO: [A-Z][a-zA-Z0-9]*;
 
-//declaracao de variaveis com atribuicao para inicializacao de variavel
-//declaracao_de_variavel_abstrato_com_atribuicao: ABISTRATO ID '(' ID ')' ;
 declaracao_de_variavel_inteiro_com_atribuicao : INTEIRO ID ATRIBUICAO VALORES_TIPO_INTEIRO ;
 declaracao_de_variavel_booleano_com_atribuicao: BOOLEANO ID ATRIBUICAO VALORES_TIPO_BOOLEANO ;
 declaracao_de_variavel_real_com_atribuicao    : REAL ID ATRIBUICAO VALORES_TIPO_REAL ;
@@ -57,13 +56,14 @@ tipos_de_cadeias_elemento : VALORES_TIPO_SIMBOLO | VALOR_TIPO_CADEIA | ID;
 expressao_aritmetica_numericas: tipo_de_valores_numericos  (operador tipo_de_valores_numericos)+ ;
 
 tipo_de_valores_numericos : VALORES_TIPO_INTEIRO | VALORES_TIPO_REAL | ID;
-operador : SOMA | SUBTRAIR | MULTIPLICAR | DIVIDIR ;
+operador : SOMA | SUBTRAIR | MULTIPLICAR | DIVIDIR | RESTO_DA_DIVISAO ;
 
     //terminais
     SOMA: '+';
     SUBTRAIR: '-';
     MULTIPLICAR: '*';
     DIVIDIR: '/';
+    RESTO_DA_DIVISAO: '%';
 //------------------------------------------------------------------------------------------------
 //Atribuicao de variaveis_________________________________________________________________________
 atribuicao_de_variavel: ID ATRIBUICAO atribuicao_de_valores TERMINAL;
@@ -111,29 +111,20 @@ instrucoes_de_troca_de_valor :  expressao_aritmetica | atribuicao_de_variavel;
 
 //declaracao de funcao___________________________________________________________________________________________________________
 
-declaracao_de_funcao_metodo: 'INICIO' tipos_de_valores ID '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
+declaracao_de_funcao_metodo: 'INICIO' (tipos_de_valores | VAZIO) ID '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
     declaracao_de_variavel* (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ 'retorna' ID TERMINAL '}''FIM' TERMINAL;
-
-
-
-/*criacao_de_tipo_abstrato: 'INICIO' 'TIPO' ABISTRATO '{' declaracao_de_variavel* formato_de_tipo_abstrato metodo_abstrato* '}' 'FIM' TERMINAL;
-
-formato_de_tipo_abstrato: ABISTRATO'(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
-                         ( instrucao_de_restricao_de_dominio | instrucoes_de_troca_de_valor )+
-                     '}';
-
-metodo_abstrato: tipos_de_valores ID '(' (declaracao_de_variavel_sem_atribuicao (',' declaracao_de_variavel_sem_atribuicao)*)? ')' '{'
-    (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao )* 'retorna' ID TERMINAL '}';
-
-chamada_de_funcao_tipo_abstrato: (ASSOCIACAO_DE_IDENTIFICADORES_DE_TIPO_ABSTRATO '(' (ID (',' ID)*)? ')' | ID ATRIBUICAO ASSOCIACAO_DE_IDENTIFICADORES_DE_TIPO_ABSTRATO '(' (ID (',' ID)*)? ')' ) TERMINAL;
-
-ASSOCIACAO_DE_IDENTIFICADORES_DE_TIPO_ABSTRATO: [a-zA-Z][a-zA-Z0-9]*'.'[a-zA-Z][a-zA-Z0-9]*;*/
 
 
 funcao_principal: 'INICIO' 'main' '(' ')' '{' declaracao_de_variavel+ (instrucao_de_controle | instrucoes_de_troca_de_valor | chamada_de_funcao)+ '}''FIM' TERMINAL;
 
 
 chamada_de_funcao : (ID '(' (ID (',' ID)*)? ')' | ID ATRIBUICAO ID '(' (ID (',' ID)*)? ')' ) TERMINAL;
+
+
+comentar: COMENTAR_LINHA | COMENTAR_BLOCO;
+
+COMENTAR_LINHA: [//] ;
+COMENTAR_BLOCO: [/*]  [\u0000-\u007F]+ [*/];
 
 
 //terminais importantes
